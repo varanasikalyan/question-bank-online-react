@@ -1,0 +1,14 @@
+.splash-screen {
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 60vh;
+    width: 100%;
+    color: #fff;
+    text-align: center;
+  }
+  
+  .splash-message {
+    padding-top: 100px;
+  }
+  
