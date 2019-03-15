@@ -12,25 +12,30 @@ import requireAuth from '../auth/JWTAuthentication';
 import UserDashboard from '../dashboard/UserDashboard';
 import UserProfile from '../auth/UserProfile';
 import SignOut from '../auth/SignOut';
-// import Loading from "../common/loading/Loading";
+import Loading from "../common/loading/Loading";
+import ShowModule from '../module/show/ShowModule';
+import './Routes.css';
 
 const Routes = () => (
-	<Switch>
-		<Route exact path='/' component={Dashboard} />
-		<Route exact path='/signin' component={SignIn} />
-    	<Route exact path='/signup' component={SignUp} />
-		<Route exact path='/forgot/password' component={ForgotPassword} />
-		{/* <Route exact path='/loading' component={Loading} /> */}
+	<div className='style'>
+		<Switch>
+			<Route exact path='/' component={Dashboard} />
+			<Route exact path='/signin' component={SignIn} />
+			<Route exact path='/signup' component={SignUp} />
+			<Route exact path='/forgot' component={ForgotPassword} />
+			<Route exact path='/loading' component={Loading} />
 
-		<Route exact path='/signout' component={requireAuth(SignOut)} />
-		<Route exact path='/home' component={ requireAuth(UserDashboard) } />
-		<Route exact path='/profile' component={ requireAuth(UserProfile) } />
-		<Route exact path='/module' component={ requireAuth(CreateModule) } />
-      	<Route exact path='/question' component={ requireAuth(CreateQuestion) } />
-		<Route exact path='/question/show' component={ requireAuth(ShowQuestion) } />
+			<Route exact path='/signout' component={requireAuth(SignOut)} />
+			<Route exact path='/home' component={ requireAuth(UserDashboard) } />
+			<Route exact path='/profile' component={ requireAuth(UserProfile) } />
+			<Route exact path='/module' component={ requireAuth(CreateModule) } />
+			<Route exact path='/question' component={ requireAuth(CreateQuestion) } />
+			<Route exact path='/question/show' component={ requireAuth(ShowQuestion) } />
+			<Route exact path='/module/show' component={ requireAuth(ShowModule) } />
 
-		<Route path='*' component={ NotFound } />	
-	</Switch>
+			<Route path='*' component={ NotFound } />	
+		</Switch>
+	</div>
 );
 
 export default Routes;

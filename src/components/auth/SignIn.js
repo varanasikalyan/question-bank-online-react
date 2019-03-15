@@ -63,7 +63,7 @@ class SignIn extends Component {
 								<div className="form-group">
 									<input className="btn btn-md btn-primary btn-block" id="submit" name="submit" type="submit" value="Sign In"/>
 								</div>
-								<a href="/forgot/password" id="forgot">Forgot your password?</a>
+								<a href="/forgot" id="forgot">Forgot your password?</a>
 								<br/>
 								<br/>
 								<label id="notaMember">Not a member?&nbsp;<a href="/signup" id="signUp">Join Us</a></label>        

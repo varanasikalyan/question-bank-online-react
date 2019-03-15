@@ -4,7 +4,7 @@ import {CREATE_MODULE, CREATE_MODULE_ERROR, GET_MODULES, GET_MODULES_ERROR, SHOW
 
 export const createModule = (module) => {    
     return (dispatch, getState) => {
-        dispatch({ type: SHOW_LOADING });   
+        dispatch({ type: SHOW_LOADING });
         axios.post(API.URI + 'api/v1/modules', {
                 headers: {
                     'Content-Type': 'application/json',

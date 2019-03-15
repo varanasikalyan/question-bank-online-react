@@ -20,7 +20,7 @@ class UserDashboard extends Component {
 		else if (this.props.module.status){
 			return (
 				this.props.module.modules.map((moduleObj, index) => {
-					return (<ModuleCard key={ index } module={ moduleObj.module } description={ moduleObj.description } author={ this.props.user.username } />);
+					return (<ModuleCard key={ index } id={ moduleObj.id } module={ moduleObj.module } description={ moduleObj.description } author={ this.props.user.username } />);
 				})
 			);
 		}
@@ -39,9 +39,9 @@ class UserDashboard extends Component {
 			'margin': '0px 0px 25px 0px' 
 		}
 		const image_style = {
-			'height': '35px',
-			'marginRight': '5px',
-			'marginBottom': '10px'
+			'height': '25px',
+    	'marginRight': '5px',
+    	'marginBottom': '5px'
 		}
 		return (
 			<div className="container">

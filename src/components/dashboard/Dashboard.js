@@ -8,23 +8,19 @@ class Dashboard extends Component {
     const style = {
       'margin': '0px 0px 25px 15px' 
     }
-    const component_style = {
-      'marginTop': '10px', 
-      'marginBottom': '350px' 
-    }
     if (this.props.user.is_authenticated)
       	return <Redirect to='/home' />
     else {
-    return (      
-        <div className="container" style={ component_style }>            
-            <div className="row">
-            	<div className="col col-centered wrapper">
-               		<h3 className="border-bottom mb-5 h3 mb-5 font-header">Recent Exams</h3>
-               		<p style={ style }>No Exams added recently...</p>
-            	</div>            
-            </div>
-        </div>
-      )
+		return (      
+			<div className="container">            
+				<div className="row">
+					<div className="col col-centered wrapper">
+						<h3 className="border-bottom mb-5 h3 mb-5 font-header">Recent Exams</h3>
+						<p style={ style }>No Exams added recently...</p>
+					</div>            
+				</div>
+			</div>
+		)
     }
   }
 }

@@ -7,7 +7,7 @@ export class ModuleCard extends Component {
         return (
             <div className='card-container'>
                 <Card>
-                    <Card.Header>{this.props.module}</Card.Header>
+                    <Card.Header>{this.props.id}. {this.props.module}</Card.Header>
                     <Card.Body>
                         <blockquote className="blockquote mb-0">
                         <p>
