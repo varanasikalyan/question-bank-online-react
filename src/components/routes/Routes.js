@@ -30,8 +30,8 @@ const Routes = () => (
 			<Route exact path='/profile' component={ requireAuth(UserProfile) } />
 			<Route exact path='/module' component={ requireAuth(CreateModule) } />
 			<Route exact path='/question' component={ requireAuth(CreateQuestion) } />
-			<Route exact path='/question/show' component={ requireAuth(ShowQuestion) } />
-			<Route exact path='/module/show' component={ requireAuth(ShowModule) } />
+			<Route exact path='/showquestion/:id' component={ requireAuth(ShowQuestion) } />
+			<Route exact path='/showmodule/:id' component={ requireAuth(ShowModule) } />
 
 			<Route path='*' component={ NotFound } />	
 		</Switch>

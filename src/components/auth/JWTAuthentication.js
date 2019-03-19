@@ -7,7 +7,8 @@ import Loading from '../common/loading/Loading';
 
 export default function requireAuth(ProtectedComponent)  {
     class JWTAuthenticate extends Component {
-        componentWillMount() {                        
+        constructor(props) {
+            super(props);
             const jwt = JWT.get_jwt()
             if (!this.props.user.is_authenticated) {
                 this.props.user.loading = true;
@@ -36,9 +37,9 @@ export default function requireAuth(ProtectedComponent)  {
                     <Loading />
                 )
             }
-            else {
+            else {                
                 return (
-                    <Redirect to={{ pathname: '/signin' }}/>
+                    <Redirect to='/signin' />
                 )
             }
         }

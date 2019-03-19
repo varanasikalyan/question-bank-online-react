@@ -5,7 +5,7 @@ import {Redirect} from 'react-router-dom';
 import Loading from '../../common/loading/Loading';
 import { connect } from 'react-redux';
 import { createModule } from '../../../store/actions/moduleActions';
-import { CREATE_MODULE, CREATE_MODULE_ERROR } from '../../../store/types/moduleTypes';
+import { CREATE_MODULE_SUCCESS, CREATE_MODULE_ERROR } from '../../../store/types/moduleTypes';
 
 class CreateModule extends Component {
     state = {
@@ -18,7 +18,7 @@ class CreateModule extends Component {
     
     componentDidMount() {
         this.setState({
-            creator_id: this.props.user.user_entity.id
+            creator_id: this.props.user.current_user.id
         });        
     }
     
@@ -37,7 +37,7 @@ class CreateModule extends Component {
         const options = {
 			zIndex: 200, top: '50px'
         }
-        if (this.props.module.status === CREATE_MODULE) {
+        if (this.props.module.status === CREATE_MODULE_SUCCESS) {
             return (
                 <Redirect to='/home' />
             )
@@ -53,7 +53,7 @@ class CreateModule extends Component {
         return ( 
             <div>
                 <Notifications options={{ options }}/>
-                { this.props.module.loading ? <Loading /> :            
+                { this.props.module.loading ? <Loading /> :
                     <div className="container add-module">
                         <form action="/module" onSubmit={this.handleSubmit} method="POST">
                             <div className="row">

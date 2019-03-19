@@ -1,18 +1,19 @@
-import { CREATE_USER, 
+import { CREATE_USER_SUCCESS, 
          CREATE_USER_ERROR, 
-         GET_USER,
+         GET_USER_SUCCESS,
          GET_USER_ERROR,
-         UPDATE_USER, 
-         DELETE_USER, 
-         SHOW_LOADING,
-         AUTHENTICATE_USER, 
+         UPDATE_USER_SUCCESS, 
+         DELETE_USER_SUCCESS, 
+         USER_SHOW_LOADING,
+         AUTHENTICATE_USER_SUCCESS, 
          AUTHENTICATE_USER_ERROR,
          SIGNOUT_USER } from '../types/userTypes';
 
 const initState = {
     response: null,
     status: '',
-    user_entity: null,
+    users: [],
+    current_user: null,
     error: null,
     loading: false,    
     token: null,
@@ -22,7 +23,7 @@ const initState = {
 
 const userReducer = (state = initState, action) => {
     switch(action.type) {
-        case SHOW_LOADING:
+        case USER_SHOW_LOADING:
             return {
                 ...state,
                 loading: true
@@ -36,15 +37,15 @@ const userReducer = (state = initState, action) => {
                 status: SIGNOUT_USER,
                 loading: false
             }       
-        case AUTHENTICATE_USER:
+        case AUTHENTICATE_USER_SUCCESS:
             return {
                 ...state,
                 token: action.response['auth_token'],
                 username: action.response['username'],
-                user_entity: action.response['user'],
+                current_user: action.response['user'],
                 loading: false,
                 is_authenticated: true,
-                status: AUTHENTICATE_USER
+                status: AUTHENTICATE_USER_SUCCESS
             }
         case AUTHENTICATE_USER_ERROR:
             return {
@@ -53,11 +54,11 @@ const userReducer = (state = initState, action) => {
                 error: action.error,
                 status: AUTHENTICATE_USER_ERROR
             }
-        case CREATE_USER:
+        case CREATE_USER_SUCCESS:
             return {
                 ...state,
                 loading: false,
-                status: CREATE_USER,
+                status: CREATE_USER_SUCCESS,
                 response: action.response
             }            
         case CREATE_USER_ERROR:
@@ -67,13 +68,13 @@ const userReducer = (state = initState, action) => {
                 status: CREATE_USER_ERROR,
                 error: action.error
             }        
-        case GET_USER:
+        case GET_USER_SUCCESS:
             return {                                
                 ...state,
                 response: action.response,
                 loading: false,
-                user_entity: action.response.data,
-                status: GET_USER
+                current_user: action.response.data,
+                status: GET_USER_SUCCESS
             }
         case GET_USER_ERROR:
             return {
@@ -82,14 +83,14 @@ const userReducer = (state = initState, action) => {
                 entity: action.error,
                 status: GET_USER_ERROR
             }
-        case UPDATE_USER:
+        case UPDATE_USER_SUCCESS:
             return {
                 ...state,
                 loading: false,
-                status: UPDATE_USER,
+                status: UPDATE_USER_SUCCESS,
                 entity: action.response                
             }            
-        case DELETE_USER:
+        case DELETE_USER_SUCCESS:
             return {
                 ...state,
                 loading: false,

@@ -3,11 +3,14 @@ import CreateMultipleChoice from './option/CreateMultipleChoice';
 import QuestionType from '../../common/Enums';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
-import axios from 'axios';
-import API from '../../common/APIHelper';
+import Loading from '../../common/loading/Loading';
+import {Redirect} from 'react-router-dom';
 import './CreateQuestion.css';
 import Notifications, {notify} from 'react-notify-toast';
 import { QuillEditor } from '../../ui-helpers/rich-text-editors/quill/QuillEditor';
+import { connect } from 'react-redux';
+import { createQuestion } from '../../../store/actions/questionActions';
+import { CREATE_QUESTION_SUCCESS, CREATE_QUESTION_ERROR } from '../../../store/types/questionTypes';
 
 class CreateQuestion extends Component {
     constructor(props) {
@@ -18,6 +21,8 @@ class CreateQuestion extends Component {
 
     state = {
         question_type: QuestionType.multiple,
+        module_id: this.props.module.current_module.id,
+        creator_id: this.props.user.current_user.id,
         question: '',
         options: [
             {
@@ -85,130 +90,139 @@ class CreateQuestion extends Component {
 
     handleSubmit = (e) => {
         e.preventDefault();        
-		axios.post(API.URI + 'api/v1/questions', {
-				headers: {
-                    'Content-Type': 'application/json',
-                    'token': localStorage.getItem('token'),
-                    'username': localStorage.getItem('username')
-				},
-				mode: 'cors',
-                question: this.state.question,
-                options: this.state.options
-			}
-		).then( function(response) {
-                if(response.data['status'] === 'success') {                    
-                    notify.show(response.data['message'], 'success', 3000, 'green');
-                }					
-                else {
-                    notify.show(response.data['message'], 'error', 3000, 'red');
-                }
-			}
-		).catch(error => {			
-			if (error.response.status === 400 || error.response.status === 500) {
-				let color = { background: '#0E1717', text: "#FFFFFF" };
-				notify.show(error.response.data['message'], 'error', 3000, color);				
-			}
-		});
+		this.props.createQuestion(this.state);
     };
     
     render() {
         const options = {
 			zIndex: 200, top: '50px'
-		}
+        }
+        if (this.props.question.status === CREATE_QUESTION_SUCCESS) {
+            const url = '/showmodule/' + this.props.module.current_module.id
+            return (
+                <Redirect to={ url } />
+            )
+        }
+        else if(this.props.question.status === CREATE_QUESTION_ERROR) {
+            if(this.props.question.error !== null)
+                if (this.props.question.error.response !== undefined && (this.props.question.error.response.status === 400 || this.props.question.error.response.status === 500))
+                    notify.show(this.props.question.error.response.data['message'], 'error', 3000, 'red');                
+            else
+                notify.show("Unable to create question...", 'error', 3000, 'red');            
+            this.props.question.error = null;
+        }
         return (
-            <div className="container add-question">
+            <div>
                 <Notifications options={{ options }}/>
-                <form action="/question" onSubmit={this.handleSubmit} method="POST">
-                    <div className="row">
-                        <div className="col-md-8">
-                            <div className="form-group">
-                                <h3 className="header">Add Question</h3>
-                            </div>
-                        </div>
-                        <div className="col-md-2 col-sm-2">
-                            <div className="form-group">
-                                <input className="btn btn-md btn-success" id="submit" name="submit" type="submit" value="Upload"/>
-                            </div>
-                        </div>
-                        <div className="col-md-2 col-sm-2">
-                            <div className="form-group">
-                                <input className="btn btn-md btn-secondary" id="clear" name="clear" type="button" value="Clear"/>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="row">
-                        <div className="col-md">
-                            <div className="form-group">                                
-                                <QuillEditor key={ this.state.id } onContentChange={ this.handleRichEditorContent }/>                                
-                            </div>
-                        </div>
-                    </div>
-                    <div className="row">
-                        <div className="col-md-4">
-                            <div className="form-group">
-                                <h4 className="header">Select answer type</h4>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="row">
-                        <div className="col-lg">
-                            <div className="container answer-group-container">
-                                <div className="row">
-                                    <div className="col-md">
-                                        <Tabs id="controlled-tab-example" activeKey={this.state.key} onSelect={ this.handleTabChange }>
-                                            <Tab eventKey={ QuestionType.multiple } title="Multiple Choice">
-                                                <table className="answer-container" border="0">
-                                                    <tbody>
-                                                        <tr>
-                                                            <td className="option-td" align="center" valign="middle">
-                                                                <div className="input-group">
-                                                                    <table>
-                                                                        <tbody>
-                                                                            <tr>
-                                                                                <td>
-                                                                                    <button type="button" onClick={ this.handleMinus } className="btn bg-danger btn-sm inc-btn" id="minus-btn"><i className="fa fa-minus"></i></button>
-                                                                                </td>
-                                                                                <td>
-                                                                                    <input type="hidden" value="2" id="optionsQty" name="optionsQty"/>
-                                                                                    <span className="qty_input">Options</span>
-                                                                                </td>
-                                                                                <td>
-                                                                                    <button type="button" onClick={ this.handlePlus } className="btn bg-success btn-sm inc-btn" id="plus-btn"><i className="fa fa-plus"></i></button>
-                                                                                </td>
-                                                                            </tr>
-                                                                        </tbody>
-                                                                    </table>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>
-                                                                {
-                                                                    this.state.options.map((optionObj, index) => {
-                                                                        return (<CreateMultipleChoice key={ index } id={ optionObj.id } option={ optionObj.option } is_correct_option={ optionObj.is_correct_option } onContentChange={ this.handleOptionContent }/>);
-                                                                    })
-                                                                }
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </Tab>
-                                            <Tab className='col-md' eventKey={ QuestionType.fill } title="Fill up the Blanks">
-                                                <h1 className="answer-container">Fill up the Blanks</h1>
-                                            </Tab>
-                                            <Tab className='col-md' eventKey={ QuestionType.written } title="Written">
-                                                <h1 className="answer-container">Written</h1>
-                                            </Tab>
-                                        </Tabs>
+                { this.props.question.loading ? <Loading /> :
+                    <div className="container add-question">                
+                        <form action="/question" onSubmit={this.handleSubmit} method="POST">
+                            <div className="row">
+                                <div className="col-md-8">
+                                    <div className="form-group">
+                                        <h3 className="header">Add Question</h3>
+                                    </div>
+                                </div>
+                                <div className="col-md-2 col-sm-2">
+                                    <div className="form-group">
+                                        <input className="btn btn-md btn-success" id="submit" name="submit" type="submit" value="Upload"/>
+                                    </div>
+                                </div>
+                                <div className="col-md-2 col-sm-2">
+                                    <div className="form-group">
+                                        <input className="btn btn-md btn-secondary" id="clear" name="clear" type="button" value="Clear"/>
                                     </div>
                                 </div>
                             </div>
-                        </div>            
-                    </div>    
-                </form>
+                            <div className="row">
+                                <div className="col-md">
+                                    <div className="form-group">                                
+                                        <QuillEditor key={ this.state.id } onContentChange={ this.handleRichEditorContent }/>                                
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="row">
+                                <div className="col-md-4">
+                                    <div className="form-group">
+                                        <h4 className="header">Select answer type</h4>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="row">
+                                <div className="col-lg">
+                                    <div className="container answer-group-container">
+                                        <div className="row">
+                                            <div className="col-md">
+                                                <Tabs id="controlled-tab-example" activeKey={this.state.key} onSelect={ this.handleTabChange }>
+                                                    <Tab eventKey={ QuestionType.multiple } title="Multiple Choice">
+                                                        <table className="answer-container" border="0">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td className="option-td" align="center" valign="middle">
+                                                                        <div className="input-group">
+                                                                            <table>
+                                                                                <tbody>
+                                                                                    <tr>
+                                                                                        <td>
+                                                                                            <button type="button" onClick={ this.handleMinus } className="btn bg-danger btn-sm inc-btn" id="minus-btn"><i className="fa fa-minus"></i></button>
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            <input type="hidden" value="2" id="optionsQty" name="optionsQty"/>
+                                                                                            <span className="qty_input">Options</span>
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            <button type="button" onClick={ this.handlePlus } className="btn bg-success btn-sm inc-btn" id="plus-btn"><i className="fa fa-plus"></i></button>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>
+                                                                        {
+                                                                            this.state.options.map((optionObj, index) => {
+                                                                                return (<CreateMultipleChoice key={ index } id={ optionObj.id } option={ optionObj.option } is_correct_option={ optionObj.is_correct_option } onContentChange={ this.handleOptionContent }/>);
+                                                                            })
+                                                                        }
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </Tab>
+                                                    <Tab className='col-md' eventKey={ QuestionType.fill } title="Fill up the Blanks">
+                                                        <h1 className="answer-container">Fill up the Blanks</h1>
+                                                    </Tab>
+                                                    <Tab className='col-md' eventKey={ QuestionType.written } title="Written">
+                                                        <h1 className="answer-container">Written</h1>
+                                                    </Tab>
+                                                </Tabs>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>            
+                            </div>    
+                        </form>
+                    </div>
+                }
             </div>
     )   
   }
 }
 
-export default CreateQuestion;
+const mapStateToProps = (state) => {
+	return {
+        module: state.module,
+        question: state.question,
+        user: state.user
+	}
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        createQuestion: (question) => dispatch(createQuestion(question))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(CreateQuestion);

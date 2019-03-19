@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import './SignIn.css';
 import { Redirect } from 'react-router-dom';
 import Notifications, { notify } from 'react-notify-toast';
-
 import { connect } from 'react-redux';
 import { authenticateUser } from '../../store/actions/userActions';
 
@@ -78,8 +77,7 @@ class SignIn extends Component {
 
 const mapStateToProps = (state, props) => {
 	return {
-		user: state.user,
-		authProps: props
+		user: state.user	
 	}
 };
 

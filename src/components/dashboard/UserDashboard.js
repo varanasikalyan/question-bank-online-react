@@ -5,11 +5,13 @@ import Loading from '../common/loading/Loading';
 import { ModuleCard } from '../module/show/ModuleCard';
 import { getModules } from '../../store/actions/moduleActions';
 import './UserDashboard.css';
+import { GET_MODULES_SUCCESS } from '../../store/types/moduleTypes';
 
 class UserDashboard extends Component {
-	componentWillMount() {      
+	constructor(props) {
+		super(props);
 		this.props.getModules({
-			creator_id: this.props.user.user_entity.id,
+			creator_id: this.props.user.current_user.id,
 			count: 3
 		});
 	}
@@ -17,7 +19,7 @@ class UserDashboard extends Component {
 		if(this.props.module.loading) {
 			return (<Loading />);
 		} 
-		else if (this.props.module.status){
+		else if (this.props.module.status === GET_MODULES_SUCCESS){
 			return (
 				this.props.module.modules.map((moduleObj, index) => {
 					return (<ModuleCard key={ index } id={ moduleObj.id } module={ moduleObj.module } description={ moduleObj.description } author={ this.props.user.username } />);

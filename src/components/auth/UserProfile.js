@@ -4,13 +4,12 @@ import Notifications from 'react-notify-toast';
 import { connect } from 'react-redux';
 import { createUser } from '../../store/actions/userActions';
 
-class UserProfile extends Component {
-    _isMounted = false;
+class UserProfile extends Component {    
     constructor(props) {
         super(props);
         this.state = {
-            username: "",
-            email: "",
+            username: this.props.user.current_user.username,
+            email: this.props.user.current_user.email,
             password: "",
             confirm_password: ""
         };
@@ -23,13 +22,6 @@ class UserProfile extends Component {
         });
     }
     
-    componentDidMount() {
-		this._isMounted = true;
-	}
-
-	componentWillUnmount() {
-		this._isMounted = false;
-	}
     handleSubmit = (e) => {
         e.preventDefault();        
         this.props.createUser({
@@ -59,10 +51,12 @@ class UserProfile extends Component {
                             <h1 className="border-bottom mb-4 h3 mb-3 font-weight-normal">Update Profile</h1>
                             <div className="form-group">
                                 <label className="form-control-label" htmlFor="username">Username</label>
+                                <br/>                                
                                 <label className="form-control-label"><b>{this.state.username}</b></label>
                             </div>
                             <div className="form-group">
                                 <label className="form-control-label" htmlFor="email">Email</label>
+                                <br/>                                
                                 <label className="form-control-label"><b>{this.state.email}</b></label>                                
                             </div>
                             <div className="form-group">
@@ -108,10 +102,16 @@ class UserProfile extends Component {
     }
 }
 
+const mapStateToProps = (state) => {
+	return {    	
+        user: state.user
+	}
+}
+
 const mapDispatchToProps = (dispatch) => {
     return {
         createUser: (user) => dispatch(createUser(user))
     }
 }
 
-export default connect(null, mapDispatchToProps)(UserProfile);
+export default connect(mapStateToProps, mapDispatchToProps)(UserProfile);

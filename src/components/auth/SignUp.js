@@ -5,10 +5,9 @@ import {Redirect} from 'react-router-dom';
 import Loading from '../common/loading/Loading';
 import { connect } from 'react-redux';
 import { createUser } from '../../store/actions/userActions';
-import { CREATE_USER, CREATE_USER_ERROR } from '../../store/types/userTypes';
+import { CREATE_USER_SUCCESS, CREATE_USER_ERROR } from '../../store/types/userTypes';
 
 class SignUp extends Component {
-    _isMounted = false;
     constructor(props) {
         super(props);
         this.state = {
@@ -25,14 +24,7 @@ class SignUp extends Component {
           [e.target.name]: e.target.value
         });
     }
-    
-    componentDidMount() {
-		this._isMounted = true;
-	}
-
-	componentWillUnmount() {
-		this._isMounted = false;
-	}
+        
     handleSubmit = (e) => {
         e.preventDefault();        
         this.props.createUser({
@@ -46,7 +38,7 @@ class SignUp extends Component {
         const options = {
 			zIndex: 200, top: '50px'
         }
-        if (this.props.user.status === CREATE_USER) {
+        if (this.props.user.status === CREATE_USER_SUCCESS) {
             this.props.user.status = null;
             return (
                 <Redirect to='/signin' />
